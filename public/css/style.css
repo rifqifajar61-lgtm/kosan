@@ -1,0 +1,45 @@
+body {
+    background:#fdf6ec;
+    font-family:Poppins, sans-serif;
+}
+
+.navbar {
+    background:#e6d3b1;
+    padding:15px;
+}
+
+.navbar a {
+    margin-right:15px;
+    text-decoration:none;
+    color:#4b3b2a;
+}
+
+.container {
+    width:90%;
+    margin:auto;
+}
+
+.card {
+    background:#fffaf2;
+    padding:20px;
+    margin:15px 0;
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.btn {
+    background:#c8a97e;
+    color:white;
+    padding:10px 15px;
+    border-radius:10px;
+    border:none;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 16px;
+}
