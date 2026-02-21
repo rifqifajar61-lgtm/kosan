@@ -9,25 +9,40 @@ use Illuminate\Support\Str;
 class SewaController extends Controller
 {
     public function index()
-    {
-        $sewa = DB::table('sewa')
-            ->join('penghuni', 'sewa.id_penghuni', '=', 'penghuni.id_penghuni')
-            ->join('kamar', 'sewa.id_kamar', '=', 'kamar.id_kamar')
-            ->select(
-                'sewa.*',
-                'penghuni.nama_penghuni',
-                'kamar.nomor_kamar as nama_kamar'
-            )
-            ->get();
+{
+    $sewa = DB::table('sewa')
+        ->join('penghuni', 'sewa.id_penghuni', '=', 'penghuni.id_penghuni')
+        ->join('kamar', 'sewa.id_kamar', '=', 'kamar.id_kamar')
+        ->select(
+            'sewa.id_sewa',
+            'penghuni.nama_penghuni',
+            'kamar.nomor_kamar',
+            'sewa.status'
+        )
+        ->get();
 
-        return view('sewa.index', compact('sewa'));
-    }
+    $penghuni = DB::table('penghuni')->get();
+
+    $kamar = DB::table('kamar')
+        ->whereNotIn('id_kamar', function ($q) {
+            $q->select('id_kamar')
+              ->from('sewa')
+              ->where('status', 'aktif');
+        })
+        ->get();
+
+    return view('sewa.index', compact('sewa','penghuni','kamar'));
+}
 
     public function create()
     {
         $penghuni = DB::table('penghuni')->get();
+
+        // hanya kamar yang BELUM disewa
         $kamar = DB::table('kamar')
-            ->where('status', 'kosong')
+            ->whereNotIn('id_kamar', function ($q) {
+                $q->select('id_kamar')->from('sewa')->where('status', 'aktif');
+            })
             ->get();
 
         return view('sewa.create', compact('penghuni', 'kamar'));
@@ -35,30 +50,32 @@ class SewaController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'id_penghuni'      => 'required',
+            'id_kamar'         => 'required',
+            'status'           => 'required',
+            'tanggal_pemasukan'=> 'required',
+            'jumlah_bayar'     => 'required|numeric'
+        ]);
+
         $idSewa = Str::uuid();
 
-        // simpan data sewa
+        // simpan SEWA
         DB::table('sewa')->insert([
-            'id_sewa' => $idSewa,
+            'id_sewa'     => $idSewa,
             'id_penghuni' => $request->id_penghuni,
-            'id_kamar' => $request->id_kamar,
-            'status' => $request->status
+            'id_kamar'    => $request->id_kamar,
+            'status'      => $request->status
         ]);
 
-        // simpan pemasukan
+        // simpan PEMASUKAN
         DB::table('pemasukan')->insert([
-            'id_pemasukan' => Str::uuid(),
-            'id_sewa' => $idSewa,
-            'tanggal' => $request->tanggal,
-            'bulan' => $request->bulan,
-            'jumlah_bayar' => $request->jumlah_bayar
+            'id_pemasukan'      => Str::uuid(),
+            'id_sewa'           => $idSewa,
+            'tanggal_pemasukan' => $request->tanggal_pemasukan,
+            'jumlah_bayar'      => $request->jumlah_bayar
         ]);
 
-        // update status kamar
-        DB::table('kamar')
-            ->where('id_kamar', $request->id_kamar)
-            ->update(['status' => 'terisi']);
-
-        return redirect('/sewa');
+        return redirect('/sewa')->with('success', 'Data sewa berhasil disimpan');
     }
 }

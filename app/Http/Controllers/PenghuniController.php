@@ -22,22 +22,63 @@ class PenghuniController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_penghuni' => 'required',
-            'no_ktp' => 'required',
-            'no_hp' => 'required',
-            'alamat' => 'required',
-            'tanggal_masuk' => 'required',
+            'nama_penghuni'    => 'required',
+            'no_ktp'           => 'required',
+            'no_hp'            => 'required',
+            'alamat_penghuni'  => 'required',
+            'tanggal_masuk'    => 'required',
         ]);
 
         DB::table('penghuni')->insert([
-            'id_penghuni'   => Str::uuid(),
-            'nama_penghuni' => $request->nama_penghuni,
-            'no_ktp'        => $request->no_ktp,
-            'no_hp'         => $request->no_hp,
-            'alamat'        => $request->alamat,
-            'tanggal_masuk' => $request->tanggal_masuk,
+            'id_penghuni'      => Str::uuid(),
+            'nama_penghuni'    => $request->nama_penghuni,
+            'no_ktp'           => $request->no_ktp,
+            'no_hp'            => $request->no_hp,
+            'alamat_penghuni'  => $request->alamat_penghuni,
+            'tanggal_masuk'    => $request->tanggal_masuk,
         ]);
 
-        return redirect('/penghuni');
+        return redirect()->route('penghuni')->with('success', 'Data penghuni berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $penghuni = DB::table('penghuni')
+            ->where('id_penghuni', $id)
+            ->first();
+
+        return view('penghuni.edit', compact('penghuni'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama_penghuni'    => 'required',
+            'no_ktp'           => 'required',
+            'no_hp'            => 'required',
+            'alamat_penghuni'  => 'required',
+            'tanggal_masuk'    => 'required',
+        ]);
+
+        DB::table('penghuni')
+            ->where('id_penghuni', $id)
+            ->update([
+                'nama_penghuni'    => $request->nama_penghuni,
+                'no_ktp'           => $request->no_ktp,
+                'no_hp'            => $request->no_hp,
+                'alamat_penghuni'  => $request->alamat_penghuni,
+                'tanggal_masuk'    => $request->tanggal_masuk,
+            ]);
+
+        return redirect()->route('penghuni')->with('success', 'Data penghuni berhasil diupdate');
+    }
+
+    public function destroy($id)
+    {
+        DB::table('penghuni')
+            ->where('id_penghuni', $id)
+            ->delete();
+
+        return redirect()->route('penghuni')->with('success', 'Data penghuni berhasil dihapus');
     }
 }

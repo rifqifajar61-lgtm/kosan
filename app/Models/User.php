@@ -3,18 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    protected $table = 'user'; // karena tabelmu namanya user
+    use Notifiable;
 
     protected $fillable = [
         'username',
         'password',
-        'isadmin'
     ];
 
     protected $hidden = [
-        'password'
+        'password',
+        'remember_token',
     ];
 }
