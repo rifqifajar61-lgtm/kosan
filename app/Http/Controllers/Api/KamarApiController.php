@@ -28,13 +28,17 @@ class KamarApiController extends Controller
         $id = Str::uuid();
 
         DB::table('kamar')->insert([
-            'id_kamar' => $id,
-            'nomor_kamar' => $request->nomor_kamar,
-            'harga_sewa' => $request->harga_sewa,
-            'fasilitas_kamar' => $request->fasilitas_kamar,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+    'id_kamar' => $id,
+    'nomor_kamar' => $request->nomor_kamar,
+    'harga_sewa' => $request->harga_sewa,
+    'fasilitas_kamar' => $request->fasilitas_kamar,
+
+    // 🔥 DEFAULT AKTIF
+    'status_kamar' => 'aktif',
+
+    'created_at' => now(),
+    'updated_at' => now()
+]);
 
         return response()->json([
             'success' => true,
@@ -42,21 +46,25 @@ class KamarApiController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
-    {
-        DB::table('kamar')
-        ->where('id_kamar',$id)
+   public function update(Request $request, $id)
+{
+    DB::table('kamar')
+        ->where('id_kamar', $id)
         ->update([
             'nomor_kamar' => $request->nomor_kamar,
             'harga_sewa' => $request->harga_sewa,
             'fasilitas_kamar' => $request->fasilitas_kamar,
+
+            // 🔥 INI YANG PALING PENTING
+            'status_kamar' => $request->status_kamar,
+
             'updated_at' => now()
         ]);
 
-        return response()->json([
-            'success' => true
-        ]);
-    }
+    return response()->json([
+        'success' => true
+    ]);
+}
 
     public function destroy($id)
     {
