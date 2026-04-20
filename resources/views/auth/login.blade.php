@@ -1,105 +1,177 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Login - KostKu Admin</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — KostKu Admin</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        :root{
+            --primary: #3b82f6;
+            --primary-soft: #dbeafe;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #dbe2ea;
+            --bg: #f8fafc;
         }
-        .login-container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            animation: slideUp 0.5s ease;
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
-        .logo-circle {
-            width: 100px; height: 100px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 50px; color: white; box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+
+        body{
+            font-family:'Inter', sans-serif;
+            background: linear-gradient(135deg, #eff6ff, #f8fafc);
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
         }
-        h1 { font-size: 28px; color: #2c3e50; margin-bottom: 8px; }
-        p.tagline { font-size: 14px; color: #7f8c8d; margin-bottom: 30px; }
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
+
+        .container{
+            width:100%;
+            max-width:380px;
+            background:#fff;
+            border:1px solid var(--border);
+            border-radius:14px;
+            overflow:hidden;
+            box-shadow:0 8px 24px rgba(0,0,0,0.06);
         }
-        label { display: block; margin-bottom: 8px; color: #2c3e50; font-weight: 500; }
-        input {
-            width: 100%; padding: 12px; border: 1px solid #ddd;
-            border-radius: 5px; font-size: 14px;
+
+        .header{
+            background: var(--primary-soft);
+            padding:22px;
+            text-align:center;
+            border-bottom:1px solid var(--border);
         }
-        input:focus { outline: none; border-color: #3498db; box-shadow: 0 0 0 3px rgba(52,152,219,0.2); }
-        .btn {
-            width: 100%; padding: 12px; border: none; border-radius: 5px;
-            background: #3498db; color: white; font-size: 16px; cursor: pointer;
+
+        .header .icon{
+            font-size:32px;
+            margin-bottom:8px;
         }
-        .btn:hover { background: #2980b9; }
-        .info { margin-top: 15px; font-size: 12px; color: #7f8c8d; }
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to   { transform: translateY(0); opacity: 1; }
+
+        .header h2{
+            font-size:20px;
+            color:var(--text);
+            margin-bottom:4px;
+        }
+
+        .header p{
+            font-size:13px;
+            color:var(--muted);
+        }
+
+        .body{
+            padding:24px;
+        }
+
+        .error{
+            background:#fee2e2;
+            color:#dc2626;
+            padding:10px;
+            border-radius:8px;
+            margin-bottom:16px;
+            font-size:13px;
+        }
+
+        .form-group{
+            margin-bottom:16px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:6px;
+            font-size:13px;
+            font-weight:600;
+            color:var(--text);
+        }
+
+        input{
+            width:100%;
+            padding:11px 12px;
+            border:1px solid var(--border);
+            border-radius:8px;
+            font-size:14px;
+        }
+
+        input:focus{
+            outline:none;
+            border-color:var(--primary);
+            box-shadow:0 0 0 3px rgba(59,130,246,0.15);
+        }
+
+        button{
+            width:100%;
+            padding:11px;
+            background:var(--primary);
+            color:#fff;
+            border:none;
+            border-radius:8px;
+            font-size:14px;
+            font-weight:600;
+            cursor:pointer;
+            transition:.2s;
+        }
+
+        button:hover{
+            background:#2563eb;
+        }
+
+        .footer{
+            text-align:center;
+            font-size:12px;
+            color:var(--muted);
+            margin-top:16px;
         }
     </style>
 </head>
 <body>
 
-<div class="login-container">
-    <div class="logo-circle">🏠</div>
-    <h1>KostKu Admin</h1>
-    <p class="tagline">Sistem Manajemen Kostan</p>
+<div class="container">
 
-    <form id="loginForm">
-        <div class="form-group">
-            <label>Username</label>
-            <input type="text" id="username" placeholder="Masukkan username" required autofocus>
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="password" placeholder="Masukkan password" required>
-        </div>
-        <button type="submit" class="btn">Login</button>
-        <div class="info">Demo: <strong>admin / admin</strong></div>
-    </form>
+    <div class="header">
+        <div class="icon">🏠</div>
+        <h2>KostKu Admin</h2>
+        <p>Login Sistem Manajemen Kost</p>
+    </div>
+
+    <div class="body">
+
+        @if ($errors->any())
+            <div class="error">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('login.post') }}">
+            @csrf
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email"
+                       value="{{ old('email') }}"
+                       placeholder="Masukkan email"
+                       required autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password"
+                       placeholder="Masukkan password"
+                       required autocomplete="current-password">
+            </div>
+
+            <button type="submit">Masuk</button>
+        </form>
+
+    </div>
+
 </div>
-
-<script>
-const isLogin = localStorage.getItem('isLoggedIn') === 'true';
-
-// redirect hanya kalau benar-benar di halaman login
-if (isLogin && window.location.pathname === '/') {
-    window.location.href = '/home';
-}
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value.trim();
-
-    if (user === 'admin' && pass === 'admin') {
-        localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = '/home';
-    } else {
-        alert('Username atau password salah!');
-    }
-});
-</script>
-
 
 </body>
 </html>

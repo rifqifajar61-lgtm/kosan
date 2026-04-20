@@ -6,28 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-       Schema::create('pemasukan', function (Blueprint $table) {
-            $table->string('id_pemasukan', 20)->primary();
-            $table->unsignedBigInteger('id_sewa');
-            $table->dateTime('tanggal_pemasukan');
-            $table->decimal('jumlah_bayar', 12, 2);
-            $table->timestamps();
+        Schema::create('pemasukan', function (Blueprint $table) {
 
-            $table->foreign('id_sewa')
-                  ->references('id_sewa')
-                  ->on('sewa')
-                  ->onDelete('cascade');
-        });
+    // Pakai UUID juga
+    $table->uuid('id_pemasukan')->primary();
+
+    // Foreign UUID (samakan dengan sewa)
+    $table->uuid('id_sewa');
+
+    $table->dateTime('tanggal_pemasukan');
+    $table->decimal('jumlah_bayar', 12, 2);
+    $table->timestamps();
+
+    $table->foreign('id_sewa')
+          ->references('id_sewa')
+          ->on('sewa')
+          ->cascadeOnDelete();
+});
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('pemasukan');

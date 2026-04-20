@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pengeluaran', function (Blueprint $table) {
-            $table->string('id_pengeluaran', 20)->primary();
-            $table->dateTime('tanggal');
-            $table->string('jenis_pengeluaran', 100);
-            $table->decimal('jumlah', 12, 2);
-            $table->timestamps();
-        });
+
+    $table->uuid('id_pengeluaran')->primary();
+
+    $table->dateTime('tanggal');
+    $table->string('jenis_pengeluaran', 100);
+    $table->decimal('jumlah', 12, 2);
+    $table->timestamps();
+});
     }
 
     /**

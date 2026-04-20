@@ -19,7 +19,10 @@ return new class extends Migration
             $table->text('alamat_penghuni');
             $table->string('no_ktp', 20);
             $table->string('no_hp', 15);
-            $table->dateTime('tanggal_masuk');
+
+            // Ganti tanggal_masuk menjadi jenis_kelamin
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
+
             $table->timestamps();
         });
     }

@@ -5,532 +5,353 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 <style>
+    body { background: transparent !important; color: #0f1733 !important; }
+
     :root {
-        --ink:      #0f0e17;
-        --paper:    #fffffe;
-        --surface:  #f5f5f7;
-        --muted:    #6b6882;
-        --muted-lt: #a7a9be;
-        --blue:     #60a5fa;   /* ← warna khusus halaman Laporan */
-        --blue-deep:#3b82f6;
+        --blue:        #2563EB;
+        --blue-dark:   #1E40AF;
+        --blue-dim:    #DBEAFE;
+        --blue-border: #BFDBFE;
+        --surface:     rgba(255,255,255,0.86);
+        --muted:       #5a6a8a;
+        --faint:       #93C5FD;
+        --radius:      14px;
     }
 
-    /* ─── HEADER ────────────────────────────────────── */
-    .page-header {
-        position: relative;
-        overflow: hidden;
-        background: var(--ink);
-        border-radius: 20px;
-        padding: 32px 40px;
-        margin-bottom: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background:
-            radial-gradient(ellipse 55% 90% at 95% 5%,  rgba(96,165,250,0.22) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 60% at 5%  95%, rgba(255,137,6,0.14)  0%, transparent 60%);
-        pointer-events: none;
-    }
-
-    .header-eyebrow {
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: var(--blue);
-        margin-bottom: 6px;
-        position: relative;
-    }
-
-    .header-title {
-        position: relative;
-        font-size: 28px;
-        font-weight: 800;
-        color: var(--paper);
-        letter-spacing: -0.8px;
-        line-height: 1.1;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .header-sub {
-        position: relative;
-        font-size: 13px;
-        color: rgba(255,255,255,0.45);
-        margin-top: 6px;
-        font-weight: 400;
-    }
-
-    /* ─── FILTER CARD ────────────────────────────────── */
-    .filter-card {
-        background: var(--paper);
-        border-radius: 20px;
-        padding: 24px 28px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
-        margin-bottom: 20px;
-    }
-
-    .filter-card-label {
-        font-size: 10.5px;
-        font-weight: 700;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 14px;
-    }
-
-    .filter-form {
-        display: flex;
-        align-items: flex-end;
-        gap: 16px;
-    }
-
-    .filter-group {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-    }
-
-    .filter-group label {
-        font-size: 10.5px;
-        font-weight: 700;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
-        color: var(--muted);
-    }
-
-    .filter-input {
-        width: 100%;
-        padding: 11px 14px;
-        background: var(--surface);
-        border: 1.5px solid transparent;
-        border-radius: 10px;
-        font-family: 'Sora', sans-serif;
-        font-size: 14px;
-        color: var(--ink);
-        transition: all 0.18s;
-        outline: none;
-        appearance: none;
-        -webkit-appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6882' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 14px center;
-        padding-right: 36px;
-    }
-
-    .filter-input:focus {
-        background-color: var(--paper);
-        border-color: var(--blue);
-        box-shadow: 0 0 0 3px rgba(96,165,250,0.14);
-    }
-
-    .btn-filter {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 11px 22px;
-        background: var(--blue);
-        color: var(--ink);
-        font-family: 'Sora', sans-serif;
-        font-size: 13px;
-        font-weight: 700;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.18s ease;
-        flex-shrink: 0;
-    }
-
-    .btn-filter:hover {
-        background: var(--blue-deep);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(96,165,250,0.35);
-        color: #fff;
-    }
-
-    /* ─── STATS ROW ──────────────────────────────────── */
-    .stats-row {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 16px;
-        margin-bottom: 20px;
-    }
-
-    @media (max-width: 768px) { .stats-row { grid-template-columns: 1fr; } }
-
-    .stat-card {
-        background: var(--paper);
-        border-radius: 16px;
-        padding: 22px 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 16px 40px rgba(0,0,0,0.1);
-    }
-
-    .stat-card::after {
-        content: '';
-        position: absolute;
-        bottom: 0; left: 0; right: 0;
-        height: 3px;
-        border-radius: 0 0 16px 16px;
-    }
-
-    .stat-card:nth-child(1)::after { background: #34d399; }
-    .stat-card:nth-child(2)::after { background: #f87171; }
-    .stat-card:nth-child(3)::after { background: var(--blue); }
-
-    .stat-icon {
-        width: 48px; height: 48px;
-        border-radius: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        flex-shrink: 0;
-    }
-
-    .stat-card:nth-child(1) .stat-icon { background: rgba(52,211,153,0.12); }
-    .stat-card:nth-child(2) .stat-icon { background: rgba(248,113,113,0.12); }
-    .stat-card:nth-child(3) .stat-icon { background: rgba(96,165,250,0.12); }
-
-    .stat-label {
-        font-size: 10.5px;
-        font-weight: 700;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 4px;
-    }
-
-    .stat-value {
-        font-size: 20px;
-        font-weight: 800;
-        color: var(--ink);
-        letter-spacing: -0.5px;
-        line-height: 1.2;
-        font-family: 'JetBrains Mono', monospace;
-    }
-
-    .stat-value.positive { color: #059669; }
-    .stat-value.negative { color: #dc2626; }
-    .stat-value.neutral  { color: #2563eb; }
-
-    /* ─── TABLE CARD ─────────────────────────────────── */
-    .table-card {
-        background: var(--paper);
-        border-radius: 20px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
-        overflow: hidden;
-    }
-
-    .table-card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 20px 28px;
-        border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .table-card-title { font-size: 14px; font-weight: 700; color: var(--ink); }
-    .table-card-sub   { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .bulan-tag {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(96,165,250,0.1);
-        border: 1px solid rgba(96,165,250,0.25);
-        color: var(--blue-deep);
-        border-radius: 999px;
-        padding: 4px 14px;
-        font-size: 12px;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
-    }
-
-    /* Table */
-    .ktable { width: 100%; border-collapse: collapse; }
-    .ktable thead tr { background: var(--surface); }
-
-    .ktable thead th {
-        padding: 14px 24px;
-        font-size: 10.5px;
-        font-weight: 700;
-        letter-spacing: 1.8px;
-        text-transform: uppercase;
-        color: var(--muted);
-        border-bottom: 1px solid rgba(0,0,0,0.07);
-        white-space: nowrap;
-        text-align: center;
-    }
-
-    .ktable thead th:first-child { text-align: left; }
-
-    .ktable tbody tr {
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-        transition: background 0.15s;
-    }
-
-    .ktable tbody tr:last-child { border-bottom: none; }
-    .ktable tbody tr:hover { background: rgba(96,165,250,0.04); }
-
-    .ktable tbody td {
-        padding: 20px 24px;
-        font-size: 14px;
-        vertical-align: middle;
-        text-align: center;
-    }
-
-    .ktable tbody td:first-child { text-align: left; }
-
-    /* Bulan cell */
-    .bulan-cell {
-        font-weight: 700;
-        font-size: 15px;
-        color: var(--ink);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .bulan-dot {
-        width: 8px; height: 8px;
-        border-radius: 50%;
-        background: var(--blue);
-        display: inline-block;
-        flex-shrink: 0;
-    }
-
-    /* Amount pills */
-    .pill-green {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(52,211,153,0.10);
-        border: 1px solid rgba(52,211,153,0.25);
-        border-radius: 999px;
-        padding: 6px 16px;
-        font-size: 13px;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
-        color: #059669;
-    }
-
-    .pill-red {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(248,113,113,0.10);
-        border: 1px solid rgba(248,113,113,0.25);
-        border-radius: 999px;
-        padding: 6px 16px;
-        font-size: 13px;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
-        color: #dc2626;
-    }
-
-    .pill-blue {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(96,165,250,0.10);
-        border: 1px solid rgba(96,165,250,0.25);
-        border-radius: 999px;
-        padding: 6px 16px;
-        font-size: 13px;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
-        color: #2563eb;
-    }
-
-    .pill-blue.minus {
-        background: rgba(248,113,113,0.10);
-        border-color: rgba(248,113,113,0.25);
-        color: #dc2626;
-    }
-
-    /* Empty / no filter state */
-    .empty-state {
-        text-align: center;
-        padding: 64px 32px;
-        color: var(--muted);
-    }
-
-    .empty-icon { font-size: 48px; opacity: 0.2; display: block; margin-bottom: 16px; }
-    .empty-text { font-size: 14px; }
-
-    /* ─── ANIMATIONS ─────────────────────────────────── */
     @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(16px); }
+        from { opacity: 0; transform: translateY(14px); }
         to   { opacity: 1; transform: translateY(0); }
     }
 
-    .page-header            { animation: fadeUp 0.45s ease both; }
-    .filter-card            { animation: fadeUp 0.45s 0.06s ease both; }
-    .stat-card:nth-child(1) { animation: fadeUp 0.45s 0.10s ease both; }
-    .stat-card:nth-child(2) { animation: fadeUp 0.45s 0.15s ease both; }
-    .stat-card:nth-child(3) { animation: fadeUp 0.45s 0.20s ease both; }
-    .table-card             { animation: fadeUp 0.45s 0.24s ease both; }
+    /* HEADER */
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px; animation: fadeUp .35s ease both; }
+    .ph-left { display: flex; flex-direction: column; gap: 4px; }
+    .ph-kicker { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--faint); font-family: 'JetBrains Mono', monospace; }
+    .ph-title  { font-size: 26px; font-weight: 800; color: var(--blue-dark); letter-spacing: -0.6px; line-height: 1; }
+    .ph-sub    { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+    /* FILTER CARD */
+    .filter-card { background: var(--surface); border: 1.5px solid rgba(37,99,235,0.13); border-radius: var(--radius); padding: 22px 26px; margin-bottom: 24px; box-shadow: 0 2px 16px rgba(37,99,235,0.07); animation: fadeUp .4s .05s ease both; }
+    .filter-card::before { content: ''; display: block; height: 2px; background: var(--blue); border-radius: var(--radius) var(--radius) 0 0; margin: -22px -26px 20px; }
+    .filter-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 14px; align-items: end; }
+    @media (max-width: 640px) { .filter-grid { grid-template-columns: 1fr; } }
+    .filter-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; }
+    .fc { width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.90); border: 1.5px solid var(--blue-border); border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; color: #0f1733; transition: border-color .15s, box-shadow .15s; outline: none; box-sizing: border-box; }
+    .fc:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); background: #fff; }
+    select.fc { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232563EB' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 38px; background-color: rgba(255,255,255,0.90); }
+    select.fc option { background: #fff; color: #0f1733; }
+    .btn-filter { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 24px; background: var(--blue); color: #fff; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; box-shadow: 0 3px 14px rgba(37,99,235,0.38); transition: all .18s; white-space: nowrap; }
+    .btn-filter:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 6px 22px rgba(37,99,235,0.48); }
+
+    /* SUMMARY */
+    .summary-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 24px; }
+    @media (max-width: 700px) { .summary-row { grid-template-columns: 1fr; } }
+    .sum-pill { background: var(--surface); border: 1.5px solid rgba(37,99,235,0.13); border-radius: var(--radius); padding: 20px 18px; text-align: center; box-shadow: 0 2px 16px rgba(37,99,235,0.07); animation: fadeUp .4s .08s ease both; }
+    .sum-pill-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--faint); margin-bottom: 8px; }
+    .sum-pill-value { font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; letter-spacing: -0.5px; line-height: 1; }
+    .sum-pill-sub { font-size: 11px; color: var(--muted); margin-top: 6px; }
+    .sum-income  { border-top: 2px solid #10b981; }
+    .sum-expense { border-top: 2px solid #ef4444; }
+    .sum-net     { border-top: 2px solid var(--blue); }
+    .val-income  { color: #059669; }
+    .val-expense { color: #dc2626; }
+    .val-net-pos { color: var(--blue-dark); }
+    .val-net-neg { color: #dc2626; }
+
+    /* SECTION CARD */
+    .sc { background: var(--surface); border: 1.5px solid rgba(37,99,235,0.13); border-radius: var(--radius); overflow: hidden; box-shadow: 0 2px 16px rgba(37,99,235,0.07); margin-bottom: 20px; animation: fadeUp .4s .1s ease both; }
+    .sc:last-child { margin-bottom: 0; }
+    .sc.income  { border-top: 2px solid #10b981; }
+    .sc.expense { border-top: 2px solid #ef4444; }
+    .sc.net     { border-top: 2px solid var(--blue); }
+
+    .sc-head { padding: 16px 22px; border-bottom: 1.5px solid var(--blue-dim); background: rgba(219,234,254,0.20); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .sc-head-left { display: flex; align-items: center; gap: 10px; }
+    .sc-icon { width: 36px; height: 36px; border-radius: 9px; border: 1.5px solid; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .sc-icon.green  { background: rgba(16,185,129,0.10); border-color: rgba(16,185,129,0.25); color: #059669; }
+    .sc-icon.red    { background: rgba(239,68,68,0.10); border-color: rgba(239,68,68,0.22); color: #dc2626; }
+    .sc-icon.blue   { background: var(--blue-dim); border-color: var(--blue-border); color: var(--blue); }
+    .sc-title { font-size: 13px; font-weight: 700; color: var(--blue-dark); }
+    .sc-sub   { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .sc-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 10px; font-size: 13px; font-weight: 800; font-family: 'JetBrains Mono', monospace; border: 1.5px solid; white-space: nowrap; }
+    .badge-green  { background: rgba(16,185,129,0.10); border-color: rgba(16,185,129,0.25); color: #059669; }
+    .badge-red    { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.20); color: #dc2626; }
+
+    /* TABLE */
+    .tbl { width: 100%; border-collapse: collapse; }
+    .tbl thead tr { background: rgba(219,234,254,0.30); }
+    .tbl thead th { padding: 11px 20px; font-size: 10.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--blue); border-bottom: 1.5px solid var(--blue-dim); white-space: nowrap; }
+    .tbl tbody tr { border-bottom: 1px solid var(--blue-dim); transition: background .12s; }
+    .tbl tbody tr:last-child { border-bottom: none; }
+    .tbl tbody tr:hover { background: rgba(219,234,254,0.25); }
+    .tbl tbody td { padding: 14px 20px; font-size: 13px; vertical-align: middle; color: #0f1733; }
+    .tfoot-row td { padding: 12px 20px; font-weight: 700; font-size: 13px; background: rgba(219,234,254,0.30); border-top: 1.5px solid var(--blue-border); }
+
+    .row-num { font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--faint); }
+
+    .name-cell { display: flex; align-items: center; gap: 9px; }
+    .avatar { width: 32px; height: 32px; border-radius: 9px; background: var(--blue-dim); border: 1.5px solid var(--blue-border); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+    .name-text { font-weight: 600; font-size: 13px; color: var(--blue-dark); }
+
+    .room-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--blue-dim); border: 1px solid var(--blue-border); border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--blue-dark); }
+    .room-dot  { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+
+    .amount-income  { font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #059669; font-size: 13px; }
+    .amount-expense { font-weight: 700; font-family: 'JetBrains Mono', monospace; color: #dc2626; font-size: 13px; }
+    .date-text { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--muted); font-weight: 600; }
+
+    .bulan-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .bulan-tag  { display: inline-flex; align-items: center; gap: 4px; background: var(--blue-dim); border: 1px solid var(--blue-border); border-radius: 6px; padding: 2px 7px; font-size: 11px; font-weight: 700; color: var(--blue-dark); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+
+    .jenis-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.20); border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 700; color: #dc2626; }
+
+    /* Ringkasan per jenis */
+    .ringkasan-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 10px; padding: 16px 22px; border-bottom: 1.5px solid var(--blue-dim); }
+    .ringkasan-item { background: rgba(255,255,255,0.65); border: 1.5px solid rgba(239,68,68,0.15); border-top: 2px solid #ef4444; border-radius: 10px; padding: 12px 14px; }
+    .ringkasan-item-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+    .ringkasan-item-value { font-size: 15px; font-weight: 800; color: #dc2626; font-family: 'JetBrains Mono', monospace; }
+    .ringkasan-item-count { font-size: 11px; color: var(--faint); margin-top: 3px; }
+
+    /* Saldo */
+    .saldo-box { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px; flex-wrap: wrap; }
+    .saldo-label   { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .saldo-formula { font-size: 12px; color: var(--faint); font-family: 'JetBrains Mono', monospace; }
+    .saldo-val-pos { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--blue-dark); letter-spacing: -0.5px; }
+    .saldo-val-neg { font-size: 22px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #dc2626; letter-spacing: -0.5px; }
+    .saldo-aman  { display: flex; align-items: center; gap: 7px; background: rgba(16,185,129,0.08); border: 1.5px solid rgba(16,185,129,0.22); border-radius: 10px; padding: 9px 14px; font-size: 12px; font-weight: 700; color: #059669; }
+    .saldo-alert { display: flex; align-items: center; gap: 7px; background: rgba(239,68,68,0.08); border: 1.5px solid rgba(239,68,68,0.20); border-radius: 10px; padding: 9px 14px; font-size: 12px; font-weight: 700; color: #dc2626; }
+
+    /* Empty */
+    .empty-state { text-align: center; padding: 48px 32px; }
+    .empty-icon  { font-size: 40px; opacity: 0.20; display: block; margin-bottom: 14px; }
+    .empty-text  { font-size: 13px; color: var(--muted); }
+
+    
 </style>
 
-{{-- ── HEADER ────────────────────────────────────────── --}}
 <div class="page-header">
-    <div style="position:relative;z-index:1">
-        <div class="header-eyebrow">Manajemen Keuangan</div>
-        <div class="header-title">Laporan Keuangan</div>
-        <div class="header-sub">Ringkasan pemasukan & pengeluaran bulanan</div>
+    <div class="ph-left">
+        <div class="ph-kicker">Manajemen Keuangan</div>
+        <div class="ph-title">Laporan Keuangan</div>
+        <div class="ph-sub">Pemasukan per kamar & penghuni, rincian pengeluaran per jenis</div>
     </div>
 </div>
 
-{{-- ── FILTER CARD ───────────────────────────────────── --}}
+{{-- FILTER --}}
 <div class="filter-card">
-    <div class="filter-card-label">Filter Laporan</div>
-    <form method="POST" action="/laporan/filter" class="filter-form">
+    <form method="POST" action="{{ route('laporan.filter') }}">
         @csrf
-        <div class="filter-group">
-            <label>Pilih Bulan</label>
-            <select name="bulan" class="filter-input" required>
-                <option value="">— Pilih Bulan —</option>
-                @foreach ([
-                    'Januari','Februari','Maret','April','Mei','Juni',
-                    'Juli','Agustus','September','Oktober','November','Desember'
-                ] as $b)
-                    <option value="{{ $b }}" {{ ($bulan ?? '') == $b ? 'selected' : '' }}>
-                        {{ $b }}
-                    </option>
-                @endforeach
-            </select>
+        <div class="filter-grid">
+            <div>
+                <label class="filter-label">Bulan</label>
+                <select name="bulan" class="fc" required>
+                    <option value="">— Pilih Bulan —</option>
+                    @foreach(['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'] as $b)
+                        <option value="{{ $b }}" {{ (isset($bulanDipilih) && $bulanDipilih==$b) ? 'selected':'' }}>{{ $b }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="filter-label">Tahun</label>
+                <select name="tahun" class="fc" required>
+                    <option value="">— Pilih Tahun —</option>
+                    @for($t = date('Y'); $t >= 2000; $t--)
+                        <option value="{{ $t }}" {{ (isset($tahunDipilih) && $tahunDipilih==$t) ? 'selected':'' }}>{{ $t }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn-filter"><i class="bi bi-search"></i> Tampilkan</button>
+            </div>
         </div>
-        <button type="submit" class="btn-filter">
-            <i class="bi bi-funnel-fill"></i> Tampilkan
-        </button>
     </form>
 </div>
 
-{{-- ── STATS (hanya tampil jika sudah filter) ─────────── --}}
-@if(isset($bulan))
-@php
-    $pemasukan    = $totalPemasukan    ?? 0;
-    $pengeluaran  = $totalPengeluaran  ?? 0;
-    $selisih      = $pemasukan - $pengeluaran;
-@endphp
-<div class="stats-row">
-    <div class="stat-card">
-        <div class="stat-icon">💰</div>
-        <div>
-            <div class="stat-label">Total Pemasukan</div>
-            <div class="stat-value positive">Rp {{ number_format($pemasukan,0,',','.') }}</div>
-        </div>
-    </div>
+@if(isset($bulanDipilih))
 
-    <div class="stat-card">
-        <div class="stat-icon">💸</div>
-        <div>
-            <div class="stat-label">Total Pengeluaran</div>
-            <div class="stat-value negative">Rp {{ number_format($pengeluaran,0,',','.') }}</div>
-        </div>
+{{-- SUMMARY --}}
+<div class="summary-row">
+    <div class="sum-pill sum-income">
+        <div class="sum-pill-label">Total Pemasukan</div>
+        <div class="sum-pill-value val-income">Rp {{ number_format($totalPemasukan,0,',','.') }}</div>
+        <div class="sum-pill-sub">{{ $detailPemasukan->count() }} transaksi</div>
     </div>
-
-    <div class="stat-card">
-        <div class="stat-icon">📊</div>
-        <div>
-            <div class="stat-label">Selisih Bersih</div>
-            <div class="stat-value {{ $selisih >= 0 ? 'positive' : 'negative' }}">
-                Rp {{ number_format(abs($selisih),0,',','.') }}
-            </div>
+    <div class="sum-pill sum-expense">
+        <div class="sum-pill-label">Total Pengeluaran</div>
+        <div class="sum-pill-value val-expense">Rp {{ number_format($totalPengeluaran,0,',','.') }}</div>
+        <div class="sum-pill-sub">{{ $detailPengeluaran->count() }} transaksi</div>
+    </div>
+    <div class="sum-pill sum-net">
+        <div class="sum-pill-label">{{ $saldoBulanIni >= 0 ? 'Selisih' : 'Defisit' }}</div>
+        <div class="sum-pill-value {{ $saldoBulanIni >= 0 ? 'val-net-pos' : 'val-net-neg' }}">
+            {{ $saldoBulanIni >= 0 ? '+' : '' }}Rp {{ number_format($saldoBulanIni,0,',','.') }}
         </div>
+        <div class="sum-pill-sub">{{ $bulanDipilih }} {{ $tahunDipilih }}</div>
     </div>
 </div>
-@endif
 
-{{-- ── TABLE ─────────────────────────────────────────── --}}
-<div class="table-card">
-    <div class="table-card-header">
-        <div>
-            <div class="table-card-title">Rekapitulasi Bulanan</div>
-            <div class="table-card-sub">Perbandingan pemasukan dan pengeluaran</div>
+{{-- DETAIL PEMASUKAN --}}
+<div class="sc income">
+    <div class="sc-head">
+        <div class="sc-head-left">
+            <div class="sc-icon green"><i class="bi bi-cash-stack"></i></div>
+            <div>
+                <div class="sc-title">Detail Pemasukan</div>
+                <div class="sc-sub">{{ $bulanDipilih }} {{ $tahunDipilih }} — rincian per kamar & penghuni</div>
+            </div>
         </div>
-        @if(isset($bulan))
-            <div class="bulan-tag"><i class="bi bi-calendar3"></i> {{ $bulan }}</div>
-        @endif
+        <div class="sc-badge badge-green"><i class="bi bi-arrow-up-circle-fill"></i> Rp {{ number_format($totalPemasukan,0,',','.') }}</div>
     </div>
 
+    @if($detailPemasukan->count() > 0)
     <div style="overflow-x:auto">
-        <table class="ktable">
+        <table class="tbl">
             <thead>
                 <tr>
-                    <th>Bulan</th>
-                    <th>Pemasukan</th>
-                    <th>Pengeluaran</th>
-                    <th>Selisih Bersih</th>
+                    <th style="padding-left:24px;width:44px">#</th>
+                    <th>Penghuni</th>
+                    <th>Kamar</th>
+                    <th>Bulan Dibayar</th>
+                    <th>Tanggal Catat</th>
+                    <th style="text-align:right;padding-right:24px">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
-                @if(isset($bulan))
-                @php
-                    $selisih = ($totalPemasukan ?? 0) - ($totalPengeluaran ?? 0);
-                @endphp
+                @foreach($detailPemasukan as $p)
                 <tr>
+                    <td style="padding-left:24px"><span class="row-num">{{ str_pad($loop->iteration,2,'0',STR_PAD_LEFT) }}</span></td>
                     <td>
-                        <div class="bulan-cell">
-                            <span class="bulan-dot"></span>
-                            {{ $bulan }}
+                        <div class="name-cell">
+                            <div class="avatar">{{ strtoupper(substr($p->nama_penghuni,0,1)) }}</div>
+                            <span class="name-text">{{ $p->nama_penghuni }}</span>
                         </div>
                     </td>
+                    <td><div class="room-pill"><span class="room-dot"></span> Kamar {{ $p->nomor_kamar }}</div></td>
                     <td>
-                        <div class="pill-green">
-                            <i class="bi bi-arrow-up-circle"></i>
-                            Rp {{ number_format($totalPemasukan ?? 0, 0, ',', '.') }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="pill-red">
-                            <i class="bi bi-arrow-down-circle"></i>
-                            Rp {{ number_format($totalPengeluaran ?? 0, 0, ',', '.') }}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="pill-blue {{ $selisih < 0 ? 'minus' : '' }}">
-                            <i class="bi bi-{{ $selisih >= 0 ? 'graph-up' : 'graph-down' }}"></i>
-                            Rp {{ number_format(abs($selisih), 0, ',', '.') }}
-                        </div>
-                    </td>
-                </tr>
-                @else
-                <tr>
-                    <td colspan="4">
-                        <div class="empty-state">
-                            <span class="empty-icon">📊</span>
-                            <div class="empty-text">
-                                Pilih bulan terlebih dahulu<br>untuk melihat laporan keuangan.
+                        @if(!empty($p->bulan_dibayar))
+                            <div class="bulan-tags">
+                               @foreach($p->bulan_dibayar as $bln)
+                                    <span class="bulan-tag"><i class="bi bi-calendar-check" style="font-size:9px"></i> {{ \Carbon\Carbon::createFromFormat('Y-m', trim($bln))->translatedFormat('M Y') }}</span>
+                                @endforeach
                             </div>
-                        </div>
+                        @else
+                            <span style="color:var(--faint);font-size:12px;font-style:italic">—</span>
+                        @endif
                     </td>
+                    <td><span class="date-text">{{ \Carbon\Carbon::parse($p->tanggal_pemasukan)->format('d M Y') }}</span></td>
+                    <td style="text-align:right;padding-right:24px"><span class="amount-income">Rp {{ number_format($p->jumlah_bayar,0,',','.') }}</span></td>
                 </tr>
-                @endif
+                @endforeach
             </tbody>
+            <tfoot>
+                <tr class="tfoot-row">
+                    <td colspan="5" style="color:#059669">Total Pemasukan {{ $bulanDipilih }} {{ $tahunDipilih }}</td>
+                    <td style="text-align:right;padding-right:24px;color:#059669;font-family:'JetBrains Mono',monospace">Rp {{ number_format($totalPemasukan,0,',','.') }}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
+    @else
+    <div class="empty-state">
+        <span class="empty-icon">💰</span>
+        <div class="empty-text">Belum ada pemasukan di bulan <strong>{{ $bulanDipilih }} {{ $tahunDipilih }}</strong></div>
+    </div>
+    @endif
 </div>
+
+{{-- DETAIL PENGELUARAN --}}
+<div class="sc expense">
+    <div class="sc-head">
+        <div class="sc-head-left">
+            <div class="sc-icon red"><i class="bi bi-receipt-cutoff"></i></div>
+            <div>
+                <div class="sc-title">Detail Pengeluaran</div>
+                <div class="sc-sub">{{ $bulanDipilih }} {{ $tahunDipilih }} — rincian per jenis</div>
+            </div>
+        </div>
+        <div class="sc-badge badge-red"><i class="bi bi-arrow-down-circle-fill"></i> Rp {{ number_format($totalPengeluaran,0,',','.') }}</div>
+    </div>
+
+    @if($detailPengeluaran->count() > 0)
+        @if($ringkasanPengeluaran->count() > 1)
+        <div class="ringkasan-grid">
+           @foreach($ringkasanPengeluaran as $item)
+@php $cnt = $detailPengeluaran->where('jenis_pengeluaran', $item->jenis_pengeluaran)->count(); @endphp
+<div class="ringkasan-item">
+    <div class="ringkasan-item-label"><i class="bi bi-tag-fill" style="font-size:9px"></i> {{ $item->jenis_pengeluaran }}</div>
+    <div class="ringkasan-item-value">Rp {{ number_format($item->total,0,',','.') }}</div>
+    <div class="ringkasan-item-count">{{ $cnt }} transaksi</div>
+</div>
+@endforeach
+        </div>
+        @endif
+        <div style="overflow-x:auto">
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th style="padding-left:24px;width:44px">#</th>
+                        <th>Jenis Pengeluaran</th>
+                        <th>Tanggal</th>
+                        <th style="text-align:right;padding-right:24px">Jumlah</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($detailPengeluaran as $e)
+                    <tr>
+                        <td style="padding-left:24px"><span class="row-num">{{ str_pad($loop->iteration,2,'0',STR_PAD_LEFT) }}</span></td>
+                        <td><div class="jenis-badge"><i class="bi bi-tag-fill" style="font-size:9px"></i> {{ $e->jenis_pengeluaran }}</div></td>
+                        <td><span class="date-text">{{ \Carbon\Carbon::parse($e->tanggal)->format('d M Y') }}</span></td>
+                        <td style="text-align:right;padding-right:24px"><span class="amount-expense">Rp {{ number_format($e->jumlah,0,',','.') }}</span></td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="tfoot-row">
+                        <td colspan="3" style="color:#dc2626">Total Pengeluaran {{ $bulanDipilih }} {{ $tahunDipilih }}</td>
+                        <td style="text-align:right;padding-right:24px;color:#dc2626;font-family:'JetBrains Mono',monospace">Rp {{ number_format($totalPengeluaran,0,',','.') }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    @else
+    <div class="empty-state">
+        <span class="empty-icon">🧾</span>
+        <div class="empty-text">Belum ada pengeluaran di bulan <strong>{{ $bulanDipilih }} {{ $tahunDipilih }}</strong></div>
+    </div>
+    @endif
+</div>
+
+{{-- SALDO BERSIH --}}
+<div class="sc net">
+    <div class="saldo-box">
+        <div>
+            <div class="saldo-label">Saldo Bersih {{ $bulanDipilih }} {{ $tahunDipilih }}</div>
+            <div class="saldo-formula">Rp {{ number_format($totalPemasukan,0,',','.') }} − Rp {{ number_format($totalPengeluaran,0,',','.') }}</div>
+        </div>
+        <div>
+            @if($saldoBulanIni >= 0)
+                <div class="saldo-val-pos">+Rp {{ number_format($saldoBulanIni,0,',','.') }}</div>
+            @else
+                <div class="saldo-val-neg">−Rp {{ number_format(abs($saldoBulanIni),0,',','.') }}</div>
+            @endif
+        </div>
+        <div>
+            @if($saldoBulanIni >= 0)
+                <div class="saldo-aman"><i class="bi bi-check-circle-fill"></i> Keuangan bulan ini aman</div>
+            @else
+                <div class="saldo-alert"><i class="bi bi-exclamation-triangle-fill"></i> Defisit bulan ini!</div>
+            @endif
+        </div>
+    </div>
+</div>
+
+@else
+<div class="sc net">
+    <div class="empty-state">
+        <span class="empty-icon">📊</span>
+        <div class="empty-text">Pilih <strong>bulan</strong> dan <strong>tahun</strong> di atas,<br>lalu klik <strong>Tampilkan</strong> untuk melihat laporan detail.</div>
+    </div>
+</div>
+@endif
 
 @endsection

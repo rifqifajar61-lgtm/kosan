@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('kamar', function (Blueprint $table) {
     $table->uuid('id_kamar')->primary();
     $table->string('nomor_kamar', 20);
-    $table->decimal('harga_sewa', 12, 2);
+    $table->bigInteger('harga_sewa');
     $table->text('fasilitas_kamar')->nullable();
     $table->timestamps();
 });

@@ -3,19 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    public $timestamps = false;
 
     protected $fillable = [
-        'username',
+        'id',
+        'email',
         'password',
+        'is_admin',
     ];
 
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 }

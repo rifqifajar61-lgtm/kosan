@@ -7,35 +7,50 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // TAMPILKAN FORM LOGIN
-    public function showLogin()
+    // GET /login
+    public function login()
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
         return view('auth.login');
     }
 
-    // PROSES LOGIN (USERNAME)
+    // POST /login
     public function prosesLogin(Request $request)
     {
-        $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required'
+        $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email'    => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $credentials = [
+            'email'    => $request->email,
+            'password' => $request->password,
+        ];
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->route('home');
+            return redirect()->intended(route('home'));
         }
 
-        return back()->with('error', 'Username atau password salah');
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors([
+                'email' => 'Email atau password salah.',
+            ]);
     }
 
-    // LOGOUT
+    // POST /logout
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }
