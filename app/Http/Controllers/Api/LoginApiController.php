@@ -11,28 +11,35 @@ class LoginApiController extends Controller
 {
     public function login(Request $request)
     {
-        $user = DB::table('users')
-            ->where('username', $request->username)
-            ->where('is_admin', 1)
-            ->first();
+        try {
+            $user = DB::table('users')
+                ->where('email', $request->username)
+                ->where('is_admin', 1)
+                ->first();
 
-        if (!$user) {
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User tidak ditemukan'
+                ], 401);
+            }
+
+            if (!Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Password salah'
+                ], 401);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Login berhasil'
+            ]);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'User tidak ditemukan'
-            ], 401);
+                'message' => 'Error server: ' . $e->getMessage()
+            ], 500);
         }
-
-        if (!Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Password salah'
-            ], 401);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Login berhasil'
-        ]);
     }
 }
