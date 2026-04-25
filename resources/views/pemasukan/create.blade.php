@@ -306,21 +306,34 @@ $sewaJson = $sewa->mapWithKeys(function ($s) {
 
 <script>
 const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-function formatRp(n) { return 'Rp ' + parseInt(n).toLocaleString('id-ID'); }
+
+function formatRp(n) {
+    return 'Rp ' + parseInt(n || 0).toLocaleString('id-ID');
+}
+
 function formatTgl(val) {
     if (!val) return null;
     const d = new Date(val + 'T00:00:00');
     if (isNaN(d)) return null;
     return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
 }
+
 function setVal(el, val, emptyText) {
-    if (val) { el.textContent = val; el.classList.remove('empty'); }
-    else     { el.textContent = emptyText; el.classList.add('empty'); }
+    if (!el) return;
+    if (val) {
+        el.textContent = val;
+        el.classList.remove('empty');
+    } else {
+        el.textContent = emptyText;
+        el.classList.add('empty');
+    }
 }
+
 function labelBulan(ym) {
     const [y, m] = ym.split('-');
     return BULAN_ID[parseInt(m) - 1] + ' ' + y;
 }
+
 function hitungBulanList(startYM, n) {
     const [sy, sm] = startYM.split('-').map(Number);
     const list = [];
@@ -332,91 +345,130 @@ function hitungBulanList(startYM, n) {
     }
     return list;
 }
+
 function getBulanBerikutnya(sewaId) {
     const d = SEWA_DATA[sewaId];
     if (!d) return null;
+
     const [y, m] = d.tanggal_mulai.split('-').map(Number);
-    let totalBulan = m + d.sudah_dibayar;
-    let nextY = y + Math.floor((totalBulan - 1) / 12);
-    let nextM = ((totalBulan - 1) % 12) + 1;
+    let total = m + d.sudah_dibayar;
+
+    let nextY = y + Math.floor((total - 1) / 12);
+    let nextM = ((total - 1) % 12) + 1;
+
     return nextY + '-' + String(nextM).padStart(2, '0');
 }
+
 function updateAll() {
     const sewaId  = document.getElementById('selectSewa').value;
     const jumlah  = parseInt(document.getElementById('inputJumlah').value) || 0;
     const tanggal = document.getElementById('inputTanggal').value;
+
     setVal(document.getElementById('prevTanggal'), formatTgl(tanggal), '—');
+
     if (!sewaId || !SEWA_DATA[sewaId]) {
         document.getElementById('kuotaSection').style.display = 'none';
         document.getElementById('calcResult').style.display = 'none';
         document.getElementById('bulanPreviewWrap').style.display = 'none';
+
         setVal(document.getElementById('prevNominal'), null, 'Belum diisi');
         document.getElementById('prevNominalSub').textContent = '—';
+
         setVal(document.getElementById('prevNama'), null, '—');
         setVal(document.getElementById('prevKamar'), null, '—');
+
         document.getElementById('prevBulanTags').innerHTML = '<span class="prev-bulan-empty">Belum ada</span>';
-        document.getElementById('btnSimpan').disabled = false;
         return;
     }
+
     const d = SEWA_DATA[sewaId];
+
+    // tampil data dasar
     setVal(document.getElementById('prevNama'), d.nama, '—');
     setVal(document.getElementById('prevKamar'), 'Kamar ' + d.kamar, '—');
+
     document.getElementById('kuotaSection').style.display = 'block';
-    document.getElementById('kuotaSudah').textContent = d.sudah_dibayar;
-    document.getElementById('kuotaTotal').textContent = d.durasi_total !== null ? d.durasi_total : '∞';
-    const pct = d.durasi_total ? Math.min(100, Math.round((d.sudah_dibayar / d.durasi_total) * 100)) : 0;
-    const bar = document.getElementById('kuotaBarFill');
-    bar.style.width = pct + '%';
-    bar.className = 'kuota-bar-fill' + (pct >= 100 ? ' done' : (pct >= 75 ? ' warn' : ''));
+
+    // HANDLE LUNAS
     if (d.sisa_kuota !== null && d.sisa_kuota <= 0) {
         document.getElementById('bulanLunasBadge').style.display = 'flex';
         document.getElementById('bulanNextInfo').style.display = 'none';
+
         document.getElementById('inputJumlah').disabled = true;
         document.getElementById('btnSimpan').disabled = true;
-        document.getElementById('sisaHelperText').textContent = 'Semua bulan sudah terbayar.';
+
+        document.getElementById('sisaHelper').textContent = 'Semua bulan sudah terbayar.';
+        return;
+    }
+
+    document.getElementById('bulanLunasBadge').style.display = 'none';
+    document.getElementById('bulanNextInfo').style.display = 'flex';
+
+    document.getElementById('inputJumlah').disabled = false;
+    document.getElementById('btnSimpan').disabled = false;
+
+    // NEXT BULAN
+    const nextYM = getBulanBerikutnya(sewaId);
+    document.getElementById('bulanNextLabel').textContent = nextYM ? labelBulan(nextYM) : '—';
+
+    // SISA
+    if (d.sisa_kuota !== null) {
+        document.getElementById('inputJumlah').max = d.sisa_kuota;
+        document.getElementById('sisaHelper').textContent =
+            'Sisa ' + d.sisa_kuota + ' bulan. Maks: ' + d.sisa_kuota + ' bulan.';
     } else {
-        document.getElementById('bulanLunasBadge').style.display = 'none';
-        document.getElementById('bulanNextInfo').style.display = 'flex';
-        document.getElementById('inputJumlah').disabled = false;
-        document.getElementById('btnSimpan').disabled = false;
-        const nextYM = getBulanBerikutnya(sewaId);
-        document.getElementById('bulanNextLabel').textContent = nextYM ? labelBulan(nextYM) : '—';
-        if (d.sisa_kuota !== null) {
-            document.getElementById('inputJumlah').max = d.sisa_kuota;
-            document.getElementById('sisaHelper').textContent = 'Sisa ' + d.sisa_kuota + ' bulan. Maks: ' + d.sisa_kuota + ' bulan.';
+        document.getElementById('inputJumlah').removeAttribute('max');
+        document.getElementById('sisaHelper').textContent = 'Sewa tanpa batas waktu.';
+    }
+
+    // PREVIEW BULAN
+    if (nextYM && jumlah > 0) {
+        const bulanList = hitungBulanList(nextYM, jumlah);
+
+        const html = bulanList.map(ym =>
+            `<span class="bulan-tag">${labelBulan(ym)}</span>`
+        ).join('');
+
+        document.getElementById('bulanPreviewList').innerHTML = html;
+        document.getElementById('bulanPreviewWrap').style.display = 'block';
+        document.getElementById('prevBulanTags').innerHTML = html;
+
+        // HITUNG TOTAL
+        const total = jumlah * d.harga;
+
+        if (total > 0) {
+            document.getElementById('calcResult').style.display = 'block';
+
+            document.getElementById('calcFormula').textContent =
+                jumlah + ' bulan × ' + formatRp(d.harga) + ' =';
+
+            document.getElementById('calcTotal').textContent = formatRp(total);
+
+            setVal(document.getElementById('prevNominal'), formatRp(total), 'Belum diisi');
+
+            document.getElementById('prevNominalSub').textContent =
+                jumlah + ' bulan × ' + formatRp(d.harga);
         } else {
-            document.getElementById('inputJumlah').removeAttribute('max');
-            document.getElementById('sisaHelper').textContent = 'Sewa tanpa batas waktu.';
-        }
-        if (nextYM && jumlah > 0) {
-            const bulanList = hitungBulanList(nextYM, jumlah);
-            const html = bulanList.map(ym => `<span class="bulan-tag"><i class="bi bi-calendar-check"></i> ${labelBulan(ym)}</span>`).join('');
-            document.getElementById('bulanPreviewList').innerHTML = html;
-            document.getElementById('bulanPreviewWrap').style.display = 'block';
-            document.getElementById('prevBulanTags').innerHTML = html;
-            const total = jumlah * d.harga;
-            if (total > 0) {
-                document.getElementById('calcResult').style.display = 'block';
-                document.getElementById('calcFormula').textContent = jumlah + ' bulan × ' + formatRp(d.harga) + ' =';
-                document.getElementById('calcTotal').textContent = formatRp(total);
-                setVal(document.getElementById('prevNominal'), formatRp(total), 'Belum diisi');
-                document.getElementById('prevNominalSub').textContent = jumlah + ' bulan × ' + formatRp(d.harga);
-            } else {
-                document.getElementById('calcResult').style.display = 'none';
-                setVal(document.getElementById('prevNominal'), null, 'Belum diisi');
-            }
-        } else {
-            document.getElementById('bulanPreviewWrap').style.display = 'none';
             document.getElementById('calcResult').style.display = 'none';
-            document.getElementById('prevBulanTags').innerHTML = '<span class="prev-bulan-empty">Belum ada</span>';
-            setVal(document.getElementById('prevNominal'), null, 'Belum diisi');
-            document.getElementById('prevNominalSub').textContent = '—';
         }
+
+    } else {
+        document.getElementById('bulanPreviewWrap').style.display = 'none';
+        document.getElementById('calcResult').style.display = 'none';
+        document.getElementById('prevBulanTags').innerHTML =
+            '<span class="prev-bulan-empty">Belum ada</span>';
+
+        setVal(document.getElementById('prevNominal'), null, 'Belum diisi');
+        document.getElementById('prevNominalSub').textContent = '—';
     }
 }
+
+// EVENT
 document.getElementById('selectSewa').addEventListener('change', updateAll);
 document.getElementById('inputJumlah').addEventListener('input', updateAll);
 document.getElementById('inputTanggal').addEventListener('change', updateAll);
+
+// INIT
 updateAll();
 </script>
 

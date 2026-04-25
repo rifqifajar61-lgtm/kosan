@@ -74,7 +74,7 @@
 
             <!-- Logout -->
             <button class="topnav-logout" onclick="openLogout()">
-                <span style="font-size:14px">🚪</span> Logout
+             Logout
             </button>
         </div>
 
