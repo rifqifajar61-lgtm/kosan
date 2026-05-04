@@ -119,7 +119,6 @@
         <div class="ph-kicker">Manajemen Keuangan</div>
         <div class="ph-title">Edit Pengeluaran</div>
     </div>
-    <a href="{{ route('pengeluaran') }}" class="btn-back"><i class="bi bi-arrow-left"></i> Kembali ke Daftar</a>
 </div>
 
 @if ($errors->any())

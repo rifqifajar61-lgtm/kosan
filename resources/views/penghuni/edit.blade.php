@@ -106,7 +106,6 @@
         <div class="ph-kicker">Manajemen Penghuni</div>
         <div class="ph-title">Edit Penghuni </div>
     </div>
-    <a href="{{ route('penghuni') }}" class="btn-back">Kembali</a>
 </div>
 
 <form method="POST" action="{{ route('penghuni.update', $penghuni->id_penghuni) }}" id="formEdit">

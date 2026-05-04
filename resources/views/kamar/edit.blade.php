@@ -123,8 +123,26 @@
 
     /* ACTIONS */
     .actions { display:flex; justify-content:flex-end; align-items:center; gap:10px; padding:16px 22px; border-top:1.5px solid var(--blue-dim); background:rgba(219,234,254,0.18); }
-    .btn-cancel { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border:1.5px solid var(--blue-border); background:transparent; color:var(--muted); font-family:'Sora',sans-serif; font-size:13px; font-weight:600; border-radius:10px; text-decoration:none; transition:all .15s; }
-    .btn-cancel:hover { background:var(--blue-dim); color:var(--blue-dark); border-color:var(--blue); }
+   .btn-cancel {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:10px 20px;
+    border:1.5px solid #ef4444;
+    background:#ef4444;
+    color:#fff;
+    font-family:'Sora',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    border-radius:10px;
+    text-decoration:none;
+    transition:all .15s;
+}
+    .btn-cancel:hover {
+    background:#dc2626;
+    border-color:#dc2626;
+    color:#fff;
+}
     .btn-save { display:inline-flex; align-items:center; gap:7px; padding:10px 24px; background:var(--blue); color:#fff; font-family:'Sora',sans-serif; font-size:13px; font-weight:700; border:none; border-radius:10px; cursor:pointer; box-shadow:0 3px 14px rgba(37,99,235,0.38); transition:all .18s; }
     .btn-save:hover { background:var(--blue-dark); transform:translateY(-1px); box-shadow:0 6px 22px rgba(37,99,235,0.48); }
 
@@ -160,9 +178,6 @@
         <div class="ph-kicker">Manajemen Properti</div>
         <div class="ph-title">Edit Kamar</div>
     </div>
-    <a href="{{ route('kamar') }}" class="btn-back">
-        <i class="bi bi-arrow-left"></i> Kembali
-    </a>
 </div>
 
 {{-- FORM --}}

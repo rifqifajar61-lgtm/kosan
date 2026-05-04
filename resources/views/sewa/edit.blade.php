@@ -130,7 +130,6 @@
         <div class="ph-kicker">Manajemen Sewa</div>
         <div class="ph-title">Edit Data Sewa</div>
     </div>
-    <a href="{{ route('sewa') }}" class="btn-back"><i class="bi bi-arrow-left"></i> Kembali ke Daftar</a>
 </div>
 
 @if ($errors->any())
