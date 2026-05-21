@@ -11,6 +11,7 @@ class Pengeluaran extends Model
     protected $primaryKey = 'id_pengeluaran';
     public $incrementing  = false;
     protected $keyType    = 'string';
+    public $timestamps = true;
 
     protected $fillable = [
         'id_pengeluaran',

@@ -13,7 +13,7 @@ class PemasukanApiController extends Controller
     // ===============================
     // GET DATA PEMASUKAN
     // ===============================
-    public function index()
+   public function index()
 {
     $data = DB::table('pemasukan')
         ->join('sewa', 'pemasukan.id_sewa', '=', 'sewa.id_sewa')
@@ -25,31 +25,30 @@ class PemasukanApiController extends Controller
             'penghuni.nama_penghuni',
             'kamar.nomor_kamar',
             'pemasukan.tanggal_pemasukan',
-            'pemasukan.jumlah_bayar'
+            'pemasukan.jumlah_bayar',
+            'pemasukan.created_at'
         )
-        ->orderBy('pemasukan.tanggal_pemasukan', 'desc')
+        ->orderBy('pemasukan.created_at', 'desc') // ✅ ganti ke created_at
         ->get();
 
     return response()->json($data);
 }
 
-    // ===============================
-    // INSERT DATA
-    // ===============================
-    public function store(Request $request)
-    {
-        $pemasukan = Pemasukan::create([
-            'id_pemasukan' => Str::uuid(),
-            'id_sewa' => $request->id_sewa,
-            'tanggal_pemasukan' => $request->tanggal_pemasukan,
-            'jumlah_bayar' => $request->jumlah_bayar
-        ]);
+public function store(Request $request)
+{
+    $pemasukan = Pemasukan::create([
+        'id_pemasukan'      => Str::uuid(),
+        'id_sewa'           => $request->id_sewa,
+        'tanggal_pemasukan' => $request->tanggal_pemasukan,
+        'jumlah_bayar'      => $request->jumlah_bayar,
+        // ✅ created_at & updated_at otomatis dari Eloquent
+    ]);
 
-        return response()->json([
-            'message' => 'Pemasukan berhasil ditambahkan',
-            'data' => $pemasukan
-        ]);
-    }
+    return response()->json([
+        'message' => 'Pemasukan berhasil ditambahkan',
+        'data'    => $pemasukan
+    ]);
+}
 
     // ===============================
     // UPDATE DATA

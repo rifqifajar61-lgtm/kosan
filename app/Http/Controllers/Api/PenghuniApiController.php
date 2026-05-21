@@ -13,7 +13,7 @@ class PenghuniApiController extends Controller
 {
     return response()->json(
         DB::table('penghuni')
-            ->orderBy('nama_penghuni','asc')
+            ->orderBy('created_at', 'desc') // ✅ terbaru di atas
             ->get()
     );
 }
@@ -26,38 +26,35 @@ class PenghuniApiController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $id = Str::uuid();
+{
+    $id = Str::uuid();
+    DB::table('penghuni')->insert([
+        'id_penghuni'     => $id,
+        'nama_penghuni'   => $request->nama_penghuni,
+        'no_ktp'          => $request->no_ktp,
+        'no_hp'           => $request->no_hp,
+        'alamat_penghuni' => $request->alamat_penghuni,
+        'jenis_kelamin'   => $request->jenis_kelamin,
+        'created_at'      => now(), // ✅ tambah
+        'updated_at'      => now(), // ✅ tambah
+    ]);
 
-        DB::table('penghuni')->insert([
-            'id_penghuni'      => $id,
-            'nama_penghuni'    => $request->nama_penghuni,
-            'no_ktp'           => $request->no_ktp,
-            'no_hp'            => $request->no_hp,
-            'alamat_penghuni'  => $request->alamat_penghuni,
-            'jenis_kelamin'    => $request->jenis_kelamin,
-        ]);
+    return response()->json(['success' => true, 'id' => $id]);
+}
 
-        return response()->json([
-            'success' => true,
-            'id' => $id
-        ]);
-    }
+   public function update(Request $request, $id)
+{
+    DB::table('penghuni')->where('id_penghuni', $id)->update([
+        'nama_penghuni'   => $request->nama_penghuni,
+        'no_ktp'          => $request->no_ktp,
+        'no_hp'           => $request->no_hp,
+        'alamat_penghuni' => $request->alamat_penghuni,
+        'jenis_kelamin'   => $request->jenis_kelamin,
+        'updated_at'      => now(), // ✅ tambah
+    ]);
 
-    public function update(Request $request, $id)
-    {
-        DB::table('penghuni')
-            ->where('id_penghuni',$id)
-            ->update([
-                'nama_penghuni'    => $request->nama_penghuni,
-                'no_ktp'           => $request->no_ktp,
-                'no_hp'            => $request->no_hp,
-                'alamat_penghuni'  => $request->alamat_penghuni,
-                'jenis_kelamin'    => $request->jenis_kelamin,
-            ]);
-
-        return response()->json(['success'=>true]);
-    }
+    return response()->json(['success' => true]);
+}
 
     public function destroy($id)
     {

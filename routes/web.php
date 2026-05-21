@@ -46,8 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/penghuni/tambah',       [PenghuniController::class, 'create'])->name('penghuni.tambah');
     Route::post('/penghuni/simpan',      [PenghuniController::class, 'store'])->name('penghuni.simpan');
     Route::get('/penghuni/edit/{id}',    [PenghuniController::class, 'edit'])->name('penghuni.edit');
-    Route::put('/penghuni/update/{id}', [PenghuniController::class, 'update'])->name('penghuni.update');
-    Route::get('/penghuni/hapus/{id}',   [PenghuniController::class, 'destroy'])->name('penghuni.hapus');
+    Route::put('/penghuni/update/{id}', [PenghuniController::class, 'update'])->name('penghuni.update'); 
 
     // Kamar
     Route::get('/kamar',              [KamarController::class, 'index'])->name('kamar');
@@ -55,7 +54,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/kamar/simpan',      [KamarController::class, 'store'])->name('kamar.simpan');
     Route::get('/kamar/edit/{id}',    [KamarController::class, 'edit'])->name('kamar.edit');
     Route::post('/kamar/update/{id}', [KamarController::class, 'update'])->name('kamar.update');
-    Route::get('/kamar/hapus/{id}',   [KamarController::class, 'destroy'])->name('kamar.hapus');
 
     // Sewa
     Route::get('/sewa',              [SewaController::class, 'index'])->name('sewa');
@@ -63,7 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/sewa/simpan',      [SewaController::class, 'store'])->name('sewa.simpan');
     Route::get('/sewa/edit/{id}',    [SewaController::class, 'edit'])->name('sewa.edit');
     Route::post('/sewa/update/{id}', [SewaController::class, 'update'])->name('sewa.update');
-    Route::get('/sewa/hapus/{id}',   [SewaController::class, 'destroy'])->name('sewa.hapus');
     Route::get('/sewa/{id}/detail',  [SewaController::class, 'detail'])->name('sewa.detail');
     Route::post('/sewa/{id}/tandai-bayar', [SewaController::class, 'tandaiBayar'])->name('sewa.tandai-bayar');
     Route::post('/sewa/{id}/batal-bayar', [SewaController::class, 'batalBayar'])->name('sewa.batal-bayar');

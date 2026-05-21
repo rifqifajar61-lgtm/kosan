@@ -10,11 +10,13 @@ use Illuminate\Support\Str;
 class KamarApiController extends Controller
 {
     public function index()
-    {
-        return response()->json(
-            DB::table('kamar')->get()
-        );
-    }
+{
+    return response()->json(
+        DB::table('kamar')
+            ->orderBy('created_at', 'desc') // ✅ sudah ada created_at di store()
+            ->get()
+    );
+}
 
     public function show($id)
     {
