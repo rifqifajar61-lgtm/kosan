@@ -138,11 +138,6 @@
                                         <span class="telat-bulan-tag">{{ $fmtBulanShort($bln) }}</span>
                                     @endforeach
                                 </div>
-                                @if($s->total_denda > 0)
-                                <div class="telat-denda">
-                                    Rp {{ number_format($s->total_denda, 0, ',', '.') }}
-                                </div>
-                                @endif
                             </div>
 
                         @elseif($s->status_jt === 'jatuh')
