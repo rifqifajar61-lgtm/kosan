@@ -140,35 +140,42 @@
         </div>
 
         {{-- Keterlambatan --}}
-        <div class="card">
-            <div class="card-head">Keterlambatan</div>
-            <div class="card-body">
-                @if($hariTelat > 0)
-                <table class="info-table">
-                    <tr><td>Jatuh Tempo</td><td>{{ $jatuhTempo->format('d M Y') }}</td></tr>
-                    <tr><td>Hari Ini</td><td>{{ $today->format('d M Y') }}</td></tr>
-                    <tr><td>Telat</td><td style="color:#dc2626">{{ $hariTelat }} hari</td></tr>
-                    <tr><td>Denda/Hari</td><td>Rp {{ number_format($dendaPerHari,0,',','.') }}</td></tr>
-                </table>
-                <div class="denda-box">
-                    <div class="label">Total Denda</div>
-                    <div class="amount">Rp {{ number_format($totalDenda,0,',','.') }}</div>
-                    <div class="detail">{{ $hariTelat }} hari × Rp {{ number_format($dendaPerHari,0,',','.') }}</div>
-                </div>
-
-                @elseif($statusJT === 'jatuh')
-                <div class="state-warn">Jatuh tempo hari ini, {{ $today->format('d M Y') }}. Segera lakukan pembayaran.</div>
-
-                @elseif($statusJT === 'aman')
-                @php $sisaHari = $today->diffInDays($jatuhTempo, false); @endphp
-                <div class="state-ok">Tidak ada keterlambatan. Jatuh tempo <b>{{ $jatuhTempo->format('d M Y') }}</b> — sisa {{ $sisaHari }} hari.</div>
-
-                @else
-                <div class="state-gray">Kontrak sudah selesai.</div>
-                @endif
-            </div>
-        </div>
+<div class="card">
+    <div class="card-head" style="{{ count($bulanTerlambat) > 0 ? 'color:#dc2626; background:#fef2f2; border-bottom-color:#fecaca;' : '' }}">
+        Keterlambatan
     </div>
+    <div class="card-body">
+
+        @if(count($bulanTerlambat) > 0)
+        <table class="info-table">
+            <tr><td>Jatuh Tempo</td><td>{{ $jatuhTempo->format('d M Y') }}</td></tr>
+            <tr><td>Hari Ini</td><td>{{ $today->format('d M Y') }}</td></tr>
+            <tr><td>Telat</td><td style="color:#dc2626">{{ $hariTelat }} hari</td></tr>
+            <tr><td>Denda/Hari</td><td>Rp {{ number_format($dendaPerHari,0,',','.') }}</td></tr>
+        </table>
+        <div class="denda-box">
+            <div class="label">Total Denda</div>
+            <div class="amount">Rp {{ number_format($totalDenda,0,',','.') }}</div>
+            <div class="detail">{{ $hariTelat }} hari × Rp {{ number_format($dendaPerHari,0,',','.') }}</div>
+        </div>
+
+        @elseif($statusJT === 'lunas')
+        <div class="state-ok">✓ Semua pembayaran lunas.</div>
+
+        @elseif($statusJT === 'jatuh')
+        <div class="state-warn">Jatuh tempo hari ini, {{ $today->format('d M Y') }}. Segera lakukan pembayaran.</div>
+
+        @elseif($statusJT === 'aman')
+        @php $sisaHari = $today->diffInDays($jatuhTempo, false); @endphp
+        <div class="state-ok">Tidak ada keterlambatan. Jatuh tempo <b>{{ $jatuhTempo->format('d M Y') }}</b> — sisa {{ $sisaHari }} hari.</div>
+
+        @elseif($statusJT === 'selesai')
+        <div class="state-gray">Kontrak sudah selesai.</div>
+
+        @endif
+    </div>
+</div>
+  </div>
 
     {{-- Progress bulan --}}
     <div class="card">
