@@ -13,88 +13,104 @@ class SewaController extends Controller
 {
     // GET /sewa
     public function index()
-    {
-        $today = Carbon::today();
+{
+    $today = Carbon::today();
 
-        $sewa = Sewa::with(['penghuni', 'kamar'])
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->each(function ($item) use ($today) {
-                $item->nama_penghuni = optional($item->penghuni)->nama_penghuni;
-                $item->nomor_kamar   = optional($item->kamar)->nomor_kamar;
-                $item->harga_sewa    = optional($item->kamar)->harga_sewa;
+    $sewa = Sewa::with(['penghuni', 'kamar'])
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->each(function ($item) use ($today) {
 
-                // ── Hitung keterlambatan per bulan ──
-                $mulai   = Carbon::parse($item->tanggal_mulai);
-                $selesai = Carbon::parse($item->tanggal_selesai);
-                // Hitung durasi dulu
-                $durasiTotal = (int) $mulai->diffInMonths($selesai);
+            $item->nama_penghuni = optional($item->penghuni)->nama_penghuni;
+            $item->nomor_kamar   = optional($item->kamar)->nomor_kamar;
+            $item->harga_sewa    = optional($item->kamar)->harga_sewa;
 
-// ── Bangun daftar semua bulan dalam kontrak ──
-$semuaBulanKontrak = [];
-for ($i = 0; $i < $durasiTotal; $i++) {
-    $semuaBulanKontrak[] = $mulai->copy()->addMonths($i)->format('Y-m');
-}
+            $mulai   = Carbon::parse($item->tanggal_mulai);
+            $selesai = Carbon::parse($item->tanggal_selesai);
 
-                // Bulan yang sudah dibayar via Pemasukan
-                $riwayatBayar = \App\Models\Pemasukan::where('id_sewa', $item->id_sewa)->get();
-                $bulanSudahDibayar = $riwayatBayar
-                    ->map(function ($p) {
-                        $bulan = $p->bulan_dibayar;
-                        if (is_string($bulan)) $bulan = json_decode($bulan, true);
-                        return $bulan ?? [];
-                    })
-                    ->flatten()
-                    ->unique()
-                    ->values()
-                    ->toArray();
+            $durasiTotal = (int) $mulai->diffInMonths($selesai);
 
-                // Bulan belum dibayar
-                $bulanBelumDibayar = array_values(array_diff($semuaBulanKontrak, $bulanSudahDibayar));
+            // Semua bulan kontrak
+            $semuaBulanKontrak = [];
 
-                // Bulan terlambat: belum bayar DAN sudah lewat akhir bulan tersebut
-                $bulanTerlambat  = [];
-                $totalHariTelat  = 0;
-                $totalDenda      = 0;
-                $dendaPerHari    = $item->denda_per_hari ?? 10000;
+            for ($i = 0; $i < $durasiTotal; $i++) {
+                $semuaBulanKontrak[] = $mulai->copy()
+                    ->addMonths($i)
+                    ->format('Y-m');
+            }
 
-                foreach ($bulanBelumDibayar as $bln) {
-                    $jatuhTempoBulan = Carbon::createFromFormat('Y-m', $bln)->endOfMonth()->startOfDay();
+            // Bulan yang sudah dibayar
+            $riwayatBayar = \App\Models\Pemasukan::where('id_sewa', $item->id_sewa)->get();
 
-                    if ($today->gt($jatuhTempoBulan)) {
-                        $bulanTerlambat[] = $bln;
-                        $hariTelatBulan   = $jatuhTempoBulan->diffInDays($today);
-                        $totalHariTelat  += $hariTelatBulan;
-                        $totalDenda      += $hariTelatBulan * $dendaPerHari;
+            $bulanSudahDibayar = $riwayatBayar
+                ->map(function ($p) {
+                    $bulan = $p->bulan_dibayar;
+
+                    if (is_string($bulan)) {
+                        $bulan = json_decode($bulan, true);
                     }
+
+                    return $bulan ?? [];
+                })
+                ->flatten()
+                ->unique()
+                ->values()
+                ->toArray();
+
+            // Bulan belum dibayar
+            $bulanBelumDibayar = array_values(
+                array_diff($semuaBulanKontrak, $bulanSudahDibayar)
+            );
+
+            // Hitung keterlambatan
+            $bulanTerlambat = [];
+            $totalHariTelat = 0;
+
+            foreach ($bulanBelumDibayar as $bln) {
+
+                $jatuhTempoBulan = Carbon::createFromFormat('Y-m', $bln)
+                    ->endOfMonth()
+                    ->startOfDay();
+
+                if ($today->gt($jatuhTempoBulan)) {
+
+                    $bulanTerlambat[] = $bln;
+
+                    $hariTelatBulan = $jatuhTempoBulan->diffInDays($today);
+
+                    $totalHariTelat += $hariTelatBulan;
                 }
+            }
 
-                // Tentukan status jatuh tempo untuk badge warna
-               if (count($bulanTerlambat) > 0) {
-    $statusJT = 'telat';
+            // Status jatuh tempo
+            if (count($bulanTerlambat) > 0) {
+                $statusJT = 'telat';
 
-} elseif (count($bulanBelumDibayar) === 0) {
-    $statusJT = 'lunas';
+            } elseif (count($bulanBelumDibayar) === 0) {
+                $statusJT = 'lunas';
 
-} elseif ($item->status === 'selesai') {
-    $statusJT = 'selesai';
+            } elseif ($item->status === 'selesai') {
+                $statusJT = 'selesai';
 
-} else {
-    $bulanBerikutnya   = $bulanBelumDibayar[0];
-    $jtBulanBerikutnya = Carbon::createFromFormat('Y-m', $bulanBerikutnya)->endOfMonth()->startOfDay();
-    $statusJT = $today->isSameDay($jtBulanBerikutnya) ? 'jatuh' : 'aman';
+            } else {
+                $bulanBerikutnya = $bulanBelumDibayar[0];
+                $jtBulanBerikutnya = Carbon::createFromFormat('Y-m', $bulanBerikutnya)
+                    ->endOfMonth()
+                    ->startOfDay();
+
+                $statusJT = $today->isSameDay($jtBulanBerikutnya)
+                    ? 'jatuh'
+                    : 'aman';
+            }
+
+            $item->bulan_terlambat    = $bulanTerlambat;
+            $item->jumlah_bulan_telat = count($bulanTerlambat);
+            $item->total_hari_telat   = $totalHariTelat;
+            $item->status_jt          = $statusJT;
+        });
+
+    return view('sewa.index', compact('sewa'));
 }
-
-                $item->bulan_terlambat   = $bulanTerlambat;
-                $item->jumlah_bulan_telat = count($bulanTerlambat);
-                $item->total_hari_telat  = $totalHariTelat;
-                $item->total_denda       = $totalDenda;
-                $item->denda_per_hari    = $dendaPerHari;
-                $item->status_jt         = $statusJT;
-            });
-
-        return view('sewa.index', compact('sewa'));
-    }
 
     // GET /sewa/tambah
     public function create()
@@ -229,146 +245,136 @@ for ($i = 0; $i < $durasiTotal; $i++) {
 
     // GET /sewa/{id}/detail
     public function detail($id)
-    {
-        $sewa = Sewa::with(['penghuni', 'kamar'])->findOrFail($id);
+{
+    $sewa = Sewa::with(['penghuni', 'kamar'])->findOrFail($id);
 
-        $sewa->nama_penghuni = optional($sewa->penghuni)->nama_penghuni;
-        $sewa->nomor_kamar   = optional($sewa->kamar)->nomor_kamar;
-        $sewa->harga_sewa    = optional($sewa->kamar)->harga_sewa ?? 0;
+    $sewa->nama_penghuni = optional($sewa->penghuni)->nama_penghuni;
+    $sewa->nomor_kamar   = optional($sewa->kamar)->nomor_kamar;
+    $sewa->harga_sewa    = optional($sewa->kamar)->harga_sewa ?? 0;
 
-        $today   = Carbon::today();
-$mulai   = Carbon::parse($sewa->tanggal_mulai);
-$selesai = Carbon::parse($sewa->tanggal_selesai);
+    $today   = Carbon::today();
+    $mulai   = Carbon::parse($sewa->tanggal_mulai);
+    $selesai = Carbon::parse($sewa->tanggal_selesai);
 
-// ✅ HITUNG DULU (INI YANG KURANG)
-$durasiTotal = (int) $mulai->diffInMonths($selesai);
+    $durasiTotal = (int) $mulai->diffInMonths($selesai);
 
-// ── Bangun daftar semua bulan dalam kontrak ──
-$semuaBulanKontrak = [];
-for ($i = 0; $i < $durasiTotal; $i++) {
-    $semuaBulanKontrak[] = $mulai->copy()->addMonths($i)->format('Y-m');
-}
-
-        // ── Riwayat pembayaran ──
-        $riwayatBayar = \App\Models\Pemasukan::where('id_sewa', $sewa->id_sewa)
-            ->orderBy('tanggal_pemasukan')
-            ->get()
-            ->map(function ($p) {
-                $bulan = $p->bulan_dibayar;
-                if (is_string($bulan)) $bulan = json_decode($bulan, true);
-                $p->bulan_dibayar = $bulan ?? [];
-                return $p;
-            });
-
-        // ── Bulan yang sudah dibayar ──
-        $bulanSudahDibayar = $riwayatBayar
-            ->pluck('bulan_dibayar')
-            ->flatten()
-            ->unique()
-            ->values()
-            ->toArray();
-
-        // ── Bulan belum dibayar ──
-        $bulanBelumDibayar = array_values(array_diff($semuaBulanKontrak, $bulanSudahDibayar));
-
-        /*
-         * ── LOGIKA KETERLAMBATAN PER BULAN ──
-         *
-         * Setiap bulan punya jatuh tempo sendiri = akhir bulan tersebut.
-         * Contoh: bulan April (2025-04) → jatuh tempo = 30 April 2025.
-         *
-         * Sebuah bulan dianggap TERLAMBAT jika:
-         *   1. Belum ada pembayaran yang mencakup bulan itu, DAN
-         *   2. Hari ini sudah melewati akhir bulan tersebut (today > endOfMonth(bulan))
-         *
-         * Hari telat per bulan = selisih hari antara akhir bulan dengan hari ini.
-         */
-        $bulanTerlambat = [];
-        $detailKeterlambatan = []; // data lengkap per bulan untuk tabel
-
-       foreach ($bulanBelumDibayar as $bln) {
-    $indexBulan      = array_search($bln, $semuaBulanKontrak);
-    $jatuhTempoBulan = Carbon::createFromFormat('Y-m', $bln)
-    ->endOfMonth()
-    ->startOfDay();
-
-
-            // Hanya terlambat jika hari ini sudah MELEWATI akhir bulan itu
-           if ($today->gte($jatuhTempoBulan)) {
-        $bulanTerlambat[] = $bln;
-
-        $hariTelatBulan = (int) $today->diffInDays($jatuhTempoBulan);
-        $dendaPerHari   = $sewa->denda_per_hari ?? 10000;
-        $dendaBulan     = $hariTelatBulan * $dendaPerHari;
-
-        $detailKeterlambatan[] = [
-            'bulan'       => $bln,
-            'jatuh_tempo' => $jatuhTempoBulan,
-            'hari_telat'  => $hariTelatBulan,
-            'denda'       => $dendaBulan,
-            ];
-            }
-        }
-
-        // ── Statistik ringkasan ──
-        $durasiTotal = (int) $mulai->diffInMonths($selesai);
-        $sudahBayarCount = count($bulanSudahDibayar);
-        $progressPct     = $durasiTotal > 0 ? round(($sudahBayarCount / $durasiTotal) * 100) : 0;
-
-        $dendaPerHari    = $sewa->denda_per_hari ?? 10000;
-        $totalHariTelat  = array_sum(array_column($detailKeterlambatan, 'hari_telat'));
-        $totalDenda      = array_sum(array_column($detailKeterlambatan, 'denda'));
-
-        /*
-         * ── Properti legacy untuk hero card & kalkulasi card ──
-         *
-         * Jatuh tempo yang ditampilkan di hero = jatuh tempo bulan terlambat PERTAMA
-         * (atau akhir kontrak jika tidak ada keterlambatan).
-         */
-        if (count($bulanTerlambat) > 0) {
-            $bulanPertamaTelat = $bulanTerlambat[0];
-            $jatuhTempoHero    = Carbon::createFromFormat('Y-m', $bulanPertamaTelat)->endOfMonth()->startOfDay();
-        } else {
-            $jatuhTempoHero = Carbon::parse($sewa->tanggal_selesai);
-        }
-
-        $sewa->jatuh_tempo    = $jatuhTempoHero;
-        $sewa->hari_telat     = $totalHariTelat;
-        $sewa->denda_per_hari = $dendaPerHari;
-        $sewa->total_denda    = $totalDenda;
-        $sewa->durasi_bulan   = $durasiTotal;
-
-        // Status hero card
-      if (count($bulanTerlambat) > 0) {
-    $sewa->status_jatuh_tempo = 'telat';
-
-} elseif (count($bulanBelumDibayar) === 0) {
-    $sewa->status_jatuh_tempo = 'lunas';
-
-} elseif ($sewa->status === 'selesai') {
-    $sewa->status_jatuh_tempo = 'selesai';
-
-} else {
-    $bulanBerikutnya          = $bulanBelumDibayar[0];
-    $jtBulanBerikutnya        = Carbon::createFromFormat('Y-m', $bulanBerikutnya)->endOfMonth()->startOfDay();
-    $sewa->status_jatuh_tempo = $today->isSameDay($jtBulanBerikutnya) ? 'jatuh' : 'aman';
-    $sewa->jatuh_tempo        = $jtBulanBerikutnya;
-}
-
-        return view('sewa.detail', compact(
-            'sewa',
-            'semuaBulanKontrak',
-            'bulanSudahDibayar',
-            'bulanBelumDibayar',
-            'bulanTerlambat',
-            'detailKeterlambatan',
-            'riwayatBayar',
-            'durasiTotal',
-            'sudahBayarCount',
-            'progressPct',
-            'totalHariTelat',
-            'totalDenda',
-            'dendaPerHari',
-        ));
+    // Semua bulan kontrak
+    $semuaBulanKontrak = [];
+    for ($i = 0; $i < $durasiTotal; $i++) {
+        $semuaBulanKontrak[] = $mulai->copy()->addMonths($i)->format('Y-m');
     }
+
+    // Riwayat pembayaran
+    $riwayatBayar = \App\Models\Pemasukan::where('id_sewa', $sewa->id_sewa)
+        ->orderBy('tanggal_pemasukan')
+        ->get()
+        ->map(function ($p) {
+            $bulan = $p->bulan_dibayar;
+
+            if (is_string($bulan)) {
+                $bulan = json_decode($bulan, true);
+            }
+
+            $p->bulan_dibayar = $bulan ?? [];
+            return $p;
+        });
+
+    // Bulan sudah dibayar
+    $bulanSudahDibayar = $riwayatBayar
+        ->pluck('bulan_dibayar')
+        ->flatten()
+        ->unique()
+        ->values()
+        ->toArray();
+
+    // Bulan belum dibayar
+    $bulanBelumDibayar = array_values(
+        array_diff($semuaBulanKontrak, $bulanSudahDibayar)
+    );
+
+    // Keterlambatan
+    $bulanTerlambat = [];
+    $detailKeterlambatan = [];
+
+    foreach ($bulanBelumDibayar as $bln) {
+
+        $jatuhTempoBulan = Carbon::createFromFormat('Y-m', $bln)
+            ->endOfMonth()
+            ->startOfDay();
+
+        if ($today->gte($jatuhTempoBulan)) {
+
+            $bulanTerlambat[] = $bln;
+
+            $hariTelatBulan = (int) $today->diffInDays($jatuhTempoBulan);
+
+            $detailKeterlambatan[] = [
+                'bulan'       => $bln,
+                'jatuh_tempo' => $jatuhTempoBulan,
+                'hari_telat'  => $hariTelatBulan,
+            ];
+        }
+    }
+
+    // Statistik
+    $sudahBayarCount = count($bulanSudahDibayar);
+    $progressPct     = $durasiTotal > 0
+        ? round(($sudahBayarCount / $durasiTotal) * 100)
+        : 0;
+
+    $totalHariTelat = array_sum(
+        array_column($detailKeterlambatan, 'hari_telat')
+    );
+
+    // Hero card
+    if (count($bulanTerlambat) > 0) {
+        $bulanPertamaTelat = $bulanTerlambat[0];
+        $jatuhTempoHero = Carbon::createFromFormat('Y-m', $bulanPertamaTelat)
+            ->endOfMonth()
+            ->startOfDay();
+    } else {
+        $jatuhTempoHero = Carbon::parse($sewa->tanggal_selesai);
+    }
+
+    $sewa->jatuh_tempo  = $jatuhTempoHero;
+    $sewa->hari_telat   = $totalHariTelat;
+    $sewa->durasi_bulan = $durasiTotal;
+
+    // Status hero card
+    if (count($bulanTerlambat) > 0) {
+        $sewa->status_jatuh_tempo = 'telat';
+
+    } elseif (count($bulanBelumDibayar) === 0) {
+        $sewa->status_jatuh_tempo = 'lunas';
+
+    } elseif ($sewa->status === 'selesai') {
+        $sewa->status_jatuh_tempo = 'selesai';
+
+    } else {
+        $bulanBerikutnya = $bulanBelumDibayar[0];
+        $jtBulanBerikutnya = Carbon::createFromFormat('Y-m', $bulanBerikutnya)
+            ->endOfMonth()
+            ->startOfDay();
+
+        $sewa->status_jatuh_tempo = $today->isSameDay($jtBulanBerikutnya)
+            ? 'jatuh'
+            : 'aman';
+
+        $sewa->jatuh_tempo = $jtBulanBerikutnya;
+    }
+
+    return view('sewa.detail', compact(
+        'sewa',
+        'semuaBulanKontrak',
+        'bulanSudahDibayar',
+        'bulanBelumDibayar',
+        'bulanTerlambat',
+        'detailKeterlambatan',
+        'riwayatBayar',
+        'durasiTotal',
+        'sudahBayarCount',
+        'progressPct',
+        'totalHariTelat'
+    ));
+}
 }

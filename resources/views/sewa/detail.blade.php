@@ -106,16 +106,6 @@
         <p style="font-size:13px; color:#374151; margin:4px 0 0">Informasi lengkap kontrak dan riwayat pembayaran penghuni.</p>
     </div>
 
-    {{-- Alert bulan belum bayar --}}
-    @if(count($bulanTerlambat) > 0)
-    <div class="alert">
-        <b>{{ count($bulanTerlambat) }} bulan belum dibayar:</b>
-        @foreach($bulanTerlambat as $bln)
-            <span class="tag tag-red" style="margin-right:4px">{{ $fmtBulan($bln) }}</span>
-        @endforeach
-    </div>
-    @endif
-
     {{-- Grid 2 kolom --}}
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">
 
@@ -148,31 +138,47 @@
 
         @if(count($bulanTerlambat) > 0)
         <table class="info-table">
-            <tr><td>Jatuh Tempo</td><td>{{ $jatuhTempo->format('d M Y') }}</td></tr>
-            <tr><td>Hari Ini</td><td>{{ $today->format('d M Y') }}</td></tr>
-            <tr><td>Telat</td><td style="color:#dc2626">{{ $hariTelat }} hari</td></tr>
-            <tr><td>Denda/Hari</td><td>Rp {{ number_format($dendaPerHari,0,',','.') }}</td></tr>
+            <tr>
+                <td>Jatuh Tempo</td>
+                <td>{{ $jatuhTempo->format('d M Y') }}</td>
+            </tr>
+            <tr>
+                <td>Hari Ini</td>
+                <td>{{ $today->format('d M Y') }}</td>
+            </tr>
+            <tr>
+                <td>Telat</td>
+                <td style="color:#dc2626">{{ $hariTelat }} hari</td>
+            </tr>
         </table>
-        <div class="denda-box">
-            <div class="label">Total Denda</div>
-            <div class="amount">Rp {{ number_format($totalDenda,0,',','.') }}</div>
-            <div class="detail">{{ $hariTelat }} hari × Rp {{ number_format($dendaPerHari,0,',','.') }}</div>
+
+        <div class="state-warn" style="margin-top:12px;">
+            Pembayaran terlambat {{ $hariTelat }} hari.
         </div>
 
         @elseif($statusJT === 'lunas')
-        <div class="state-ok">✓ Semua pembayaran lunas.</div>
+        <div class="state-ok">
+            ✓ Semua pembayaran lunas.
+        </div>
 
         @elseif($statusJT === 'jatuh')
-        <div class="state-warn">Jatuh tempo hari ini, {{ $today->format('d M Y') }}. Segera lakukan pembayaran.</div>
+        <div class="state-warn">
+            Jatuh tempo hari ini, {{ $today->format('d M Y') }}. Segera lakukan pembayaran.
+        </div>
 
         @elseif($statusJT === 'aman')
         @php $sisaHari = $today->diffInDays($jatuhTempo, false); @endphp
-        <div class="state-ok">Tidak ada keterlambatan. Jatuh tempo <b>{{ $jatuhTempo->format('d M Y') }}</b> — sisa {{ $sisaHari }} hari.</div>
+        <div class="state-ok">
+            Tidak ada keterlambatan. Jatuh tempo <b>{{ $jatuhTempo->format('d M Y') }}</b> — sisa {{ $sisaHari }} hari.
+        </div>
 
         @elseif($statusJT === 'selesai')
-        <div class="state-gray">Kontrak sudah selesai.</div>
+        <div class="state-gray">
+            Kontrak sudah selesai.
+        </div>
 
         @endif
+
     </div>
 </div>
   </div>
