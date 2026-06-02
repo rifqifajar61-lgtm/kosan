@@ -160,7 +160,7 @@
                 <div class="state-warn">Jatuh tempo hari ini, {{ $today->format('d M Y') }}. Segera lakukan pembayaran.</div>
 
                 @elseif($statusJT === 'aman')
-                @php $sisaHari = $today->diffInDays($jatuhTempo); @endphp
+                @php $sisaHari = $today->diffInDays($jatuhTempo, false); @endphp
                 <div class="state-ok">Tidak ada keterlambatan. Jatuh tempo <b>{{ $jatuhTempo->format('d M Y') }}</b> — sisa {{ $sisaHari }} hari.</div>
 
                 @else

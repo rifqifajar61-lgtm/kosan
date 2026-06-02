@@ -285,7 +285,9 @@ for ($i = 0; $i < $durasiTotal; $i++) {
 
        foreach ($bulanBelumDibayar as $bln) {
     $indexBulan      = array_search($bln, $semuaBulanKontrak);
-    $jatuhTempoBulan = $mulai->copy()->addMonths($indexBulan + 1)->startOfDay();
+    $jatuhTempoBulan = Carbon::createFromFormat('Y-m', $bln)
+    ->endOfMonth()
+    ->startOfDay();
 
 
             // Hanya terlambat jika hari ini sudah MELEWATI akhir bulan itu
