@@ -70,17 +70,20 @@ for ($i = 0; $i < $durasiTotal; $i++) {
                 }
 
                 // Tentukan status jatuh tempo untuk badge warna
-                if ($item->status === 'selesai') {
-                    $statusJT = 'selesai';
-                } elseif (count($bulanTerlambat) > 0) {
-                    $statusJT = 'telat';
-                } elseif (count($bulanBelumDibayar) > 0) {
-                    $bulanBerikutnya   = $bulanBelumDibayar[0];
-                    $jtBulanBerikutnya = Carbon::createFromFormat('Y-m', $bulanBerikutnya)->endOfMonth()->startOfDay();
-                    $statusJT = $today->isSameDay($jtBulanBerikutnya) ? 'jatuh' : 'aman';
-                } else {
-                    $statusJT = 'lunas';
-                }
+               if (count($bulanTerlambat) > 0) {
+    $statusJT = 'telat';
+
+} elseif (count($bulanBelumDibayar) === 0) {
+    $statusJT = 'lunas';
+
+} elseif ($item->status === 'selesai') {
+    $statusJT = 'selesai';
+
+} else {
+    $bulanBerikutnya   = $bulanBelumDibayar[0];
+    $jtBulanBerikutnya = Carbon::createFromFormat('Y-m', $bulanBerikutnya)->endOfMonth()->startOfDay();
+    $statusJT = $today->isSameDay($jtBulanBerikutnya) ? 'jatuh' : 'aman';
+}
 
                 $item->bulan_terlambat   = $bulanTerlambat;
                 $item->jumlah_bulan_telat = count($bulanTerlambat);
@@ -336,18 +339,21 @@ for ($i = 0; $i < $durasiTotal; $i++) {
         $sewa->durasi_bulan   = $durasiTotal;
 
         // Status hero card
-        if ($sewa->status === 'selesai') {
-            $sewa->status_jatuh_tempo = 'selesai';
-        } elseif (count($bulanTerlambat) > 0) {
-            $sewa->status_jatuh_tempo = 'telat';
-        } elseif (count($bulanBelumDibayar) > 0) {
-            $bulanBerikutnya   = $bulanBelumDibayar[0];
-            $jtBulanBerikutnya = Carbon::createFromFormat('Y-m', $bulanBerikutnya)->endOfMonth()->startOfDay();
-            $sewa->status_jatuh_tempo = $today->isSameDay($jtBulanBerikutnya) ? 'jatuh' : 'aman';
-            $sewa->jatuh_tempo        = $jtBulanBerikutnya;
-        } else {
-            $sewa->status_jatuh_tempo = 'aman';
-        }
+      if (count($bulanTerlambat) > 0) {
+    $sewa->status_jatuh_tempo = 'telat';
+
+} elseif (count($bulanBelumDibayar) === 0) {
+    $sewa->status_jatuh_tempo = 'lunas';
+
+} elseif ($sewa->status === 'selesai') {
+    $sewa->status_jatuh_tempo = 'selesai';
+
+} else {
+    $bulanBerikutnya          = $bulanBelumDibayar[0];
+    $jtBulanBerikutnya        = Carbon::createFromFormat('Y-m', $bulanBerikutnya)->endOfMonth()->startOfDay();
+    $sewa->status_jatuh_tempo = $today->isSameDay($jtBulanBerikutnya) ? 'jatuh' : 'aman';
+    $sewa->jatuh_tempo        = $jtBulanBerikutnya;
+}
 
         return view('sewa.detail', compact(
             'sewa',
